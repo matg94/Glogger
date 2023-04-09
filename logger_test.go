@@ -62,11 +62,33 @@ func TestSimpleLogger(t *testing.T) {
 	assertEqual(t, expected, buffer.String())
 	buffer.Reset()
 }
-func TestLoggerFormatter(t *testing.T) {
 
+func TestFormattedLogger(t *testing.T) {
+	buffer := new(bytes.Buffer)
+
+	logger := CreateFormattedLogger(
+		"[level]: [log]",
+		func(args ...interface{}) {
+			fmt.Fprintln(buffer, args...)
+		})
+
+	log := Str("test message")
+
+	logger.Error(log)
+	expected := fmt.Sprintf("%sERROR%s: test message%s\n",
+		colors["red"],
+		colors["reset"],
+		colors["reset"],
+	)
+	assertEqual(t, expected, buffer.String())
+	buffer.Reset()
+}
+
+func TestLoggerFormatter(t *testing.T) {
 	config := &LogFormatConfig{
 		DateFormat: "2023-02-02 15:15:15",
 		Format:     "[date] [level]: [log] [default]",
+		LevelColor: true,
 		LevelColors: map[string]string{
 			"error": "red",
 			"info":  "blue",

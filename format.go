@@ -9,6 +9,7 @@ import (
 type LogFormatConfig struct {
 	DateFormat  string
 	Format      string
+	LevelColor  bool
 	LevelColors map[string]string
 }
 
@@ -27,7 +28,10 @@ func Colorize(message, color string) string {
 func formatParser(cmd, level, log string, config *LogFormatConfig, time time.Time) string {
 	switch cmd {
 	case "[level]":
-		return Colorize(strings.ToUpper(level), config.LevelColors[level])
+		if config.LevelColor {
+			return Colorize(strings.ToUpper(level), config.LevelColors[level])
+		}
+		return strings.ToUpper(level)
 	case "[date]":
 		return time.Format(config.DateFormat)
 	case "[log]":

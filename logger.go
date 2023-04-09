@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"time"
+)
 
 var colors = map[string]string{
 	"black":   "\033[30m",
@@ -35,6 +37,7 @@ func CreateConsoleLogger(dateFormat, logFormat string, levelColors map[string]st
 		Config: &LogFormatConfig{
 			DateFormat:  dateFormat,
 			Format:      logFormat,
+			LevelColor:  true,
 			LevelColors: levelColors,
 		},
 		LogFunc: logFunc,
@@ -47,6 +50,7 @@ func CreateFormattedLogger(logFormat string, logFunc func(...any)) *ConsoleLogge
 		Config: &LogFormatConfig{
 			DateFormat: "[2006-01-02 15:04:05]",
 			Format:     logFormat,
+			LevelColor: true,
 			LevelColors: map[string]string{
 				"error": "red",
 				"info":  "blue",
@@ -63,6 +67,7 @@ func CreateSimpleConsoleLogger(logFunc func(...any)) *ConsoleLogger {
 		Config: &LogFormatConfig{
 			DateFormat: "[2006-01-02 15:04:05]",
 			Format:     "[green][date][reset] [yellow]->[reset] [level]: [log]",
+			LevelColor: true,
 			LevelColors: map[string]string{
 				"error": "red",
 				"info":  "blue",

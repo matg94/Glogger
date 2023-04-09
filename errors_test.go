@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"testing"
 )
 
@@ -202,4 +204,25 @@ func TestJSONSerialization(t *testing.T) {
 	if jsonErr.Caused[1].At != "location 2" {
 		t.Errorf("Unexpected sub error location: %s", jsonErr.Caused[1].At)
 	}
+}
+
+func TestLogIfErr(t *testing.T) {
+	baseErr := errors.New("error")
+	err := NewError(baseErr)
+
+	expectedStackTrace := "root cause: error\n"
+
+	buffer := new(bytes.Buffer)
+	err.LogIfErr(func(err Loggable) {
+		fmt.Fprint(buffer, err.Error())
+	})
+	assertEqual(t, expectedStackTrace, buffer.String())
+	buffer.Reset()
+
+	emptyErr := EmptyErr()
+	emptyErr.LogIfErr(func(err Loggable) {
+		fmt.Fprint(buffer, err.Error())
+	})
+	assertEqual(t, "", buffer.String())
+	buffer.Reset()
 }
