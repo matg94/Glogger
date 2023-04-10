@@ -213,14 +213,14 @@ func TestLogIfErr(t *testing.T) {
 	expectedStackTrace := "root cause: error\n"
 
 	buffer := new(bytes.Buffer)
-	err.LogIfErr(func(err Loggable) {
+	_ = err.LogIfErr(func(err Loggable) {
 		fmt.Fprint(buffer, err.Error())
 	})
 	assertEqual(t, expectedStackTrace, buffer.String())
 	buffer.Reset()
 
 	emptyErr := EmptyErr()
-	emptyErr.LogIfErr(func(err Loggable) {
+	_ = emptyErr.LogIfErr(func(err Loggable) {
 		fmt.Fprint(buffer, err.Error())
 	})
 	assertEqual(t, "", buffer.String())

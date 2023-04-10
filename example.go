@@ -6,8 +6,7 @@ import (
 )
 
 func SimpleLog(log Loggable) {
-	logger := CreateFormattedLogger(
-		"[blue][date][reset] -- [level]: [yellow][log]",
+	logger := CreateSimpleConsoleLogger(
 		func(a ...any) {
 			fmt.Print(a...)
 		},
@@ -31,5 +30,9 @@ func ExampleWithReturns(shouldErr bool) (string, Err) {
 }
 
 func Example() {
-	ExampleWithReturns(false)
+	val, err := ExampleWithReturns(true)
+	if !err.Ok() {
+		return
+	}
+	fmt.Println(val)
 }
