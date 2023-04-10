@@ -42,7 +42,7 @@ func TestDefaultLogger(t *testing.T) {
 func TestSimpleLogger(t *testing.T) {
 	buffer := new(bytes.Buffer)
 
-	logger := CreateSimpleConsoleLogger(func(args ...interface{}) {
+	logger := CreateSimpleConsoleLogger(func(args ...any) {
 		fmt.Fprintln(buffer, args...)
 	})
 

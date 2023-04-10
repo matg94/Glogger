@@ -14,25 +14,34 @@ func SimpleLog(log Loggable) {
 	logger.Error(log)
 }
 
-func SomeFuncWithReturns(err bool) (string, error) {
-	if err {
-		return "", errors.New("some failure")
-	}
-	return "hello", nil
+func SomeError() Err {
+	return NewError(errors.New("some go error")).
+		Caused("failed to run example with returns").
+		LogIfErr(SimpleLog)
 }
 
-func ExampleWithReturns(shouldErr bool) (string, Err) {
-	res, err := SomeFuncWithReturns(shouldErr)
+func SomeFuncWithReturns() (string, error) {
+	return "", errors.New("some failure")
+}
+
+func ExampleWithReturns() (string, Err) {
+	res, err := SomeFuncWithReturns()
 	if err != nil {
 		return "", NewError(err).Caused("failed to run example with returns").LogIfErr(SimpleLog)
 	}
-	return res + ", World!", EmptyErr()
+	return res, EmptyErr()
+}
+
+func Test() {
+	logger := CreateSimpleConsoleLogger(
+		func(a ...any) {
+			fmt.Println(a...)
+		},
+	)
+	logger.Info(Str("test"))
 }
 
 func Example() {
-	val, err := ExampleWithReturns(true)
-	if !err.Ok() {
-		return
-	}
-	fmt.Println(val)
+	Test()
+
 }
