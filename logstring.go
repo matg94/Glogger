@@ -1,4 +1,4 @@
-package main
+package glogger
 
 type LogString struct {
 	str string
