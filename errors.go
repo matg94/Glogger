@@ -10,12 +10,14 @@ type Err interface {
 	GetErrCode() int
 	GetStack() []SubErr
 	GetStackTrace() string
+	GetUserErr() string
 	Error() string
 	JSON() (string, Err)
 	Caused(string) Err
 	CausedAt(string, string) Err
 	Code(int) Err
 	UserErr(string) Err
+	LogAs(string) Err
 	Ok() bool
 	LogIfErr(func(Loggable)) Err
 }
@@ -29,7 +31,17 @@ type Error struct {
 	baseErr error
 	code    int
 	userErr string
+	logOverride string
 	stack   []SubErr
+}
+
+func (e *Error) GetUserErr() string {
+	return e.userErr
+}
+
+func (e *Error) LogAs(logMessage string) Err {
+	e.logOverride = logMessage
+	return e
 }
 
 func (e *Error) UserErr(errMessage string) Err {
@@ -83,8 +95,8 @@ func (e *Error) GetStackTrace() string {
 }
 
 func (e *Error) Error() string {
-	if e.userErr != "" {
-		return e.userErr
+	if e.logOverride != "" {
+		return e.logOverride
 	}
 	return e.GetStackTrace()
 }
@@ -146,3 +158,4 @@ func (e *Error) LogIfErr(log func(Loggable)) Err {
 func (e *Error) Ok() bool {
 	return e.baseErr == nil
 }
+
