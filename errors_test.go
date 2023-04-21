@@ -206,6 +206,20 @@ func TestJSONSerialization(t *testing.T) {
 	}
 }
 
+func TestUserErrLoggedIfExists(t *testing.T) {
+	baseErr := errors.New("some error")
+	err := NewError(baseErr).UserErr("could not process").Caused("some issue")
+
+	expectedUserErr := "could not process"
+
+	buffer := new(bytes.Buffer)
+	_ = err.LogIfErr(func(err Loggable) {
+		fmt.Fprint(buffer, err.Error())
+	})
+	assertEqual(t, expectedUserErr, buffer.String())
+	buffer.Reset()
+}
+
 func TestLogIfErr(t *testing.T) {
 	baseErr := errors.New("error")
 	err := NewError(baseErr)

@@ -15,6 +15,7 @@ type Err interface {
 	Caused(string) Err
 	CausedAt(string, string) Err
 	Code(int) Err
+	UserErr(string) Err
 	Ok() bool
 	LogIfErr(func(Loggable)) Err
 }
@@ -27,7 +28,13 @@ type SubErr struct {
 type Error struct {
 	baseErr error
 	code    int
+	userErr string
 	stack   []SubErr
+}
+
+func (e *Error) UserErr(errMessage string) Err {
+	e.userErr = errMessage
+	return e
 }
 
 type JSONErr struct {
@@ -76,6 +83,9 @@ func (e *Error) GetStackTrace() string {
 }
 
 func (e *Error) Error() string {
+	if e.userErr != "" {
+		return e.userErr
+	}
 	return e.GetStackTrace()
 }
 
